@@ -12,95 +12,11 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card__body p-0 divide-y divide-black/10 dark:divide-white/15">
-          <div class="flex items-center justify-between gap-3 px-4 py-3">
-            <span class="flex items-center gap-2 text-sm text-muted-foreground">
-              <PhUserCircle :size="16" class="shrink-0" />
-              Diberikan oleh
-            </span>
-            <span class="text-sm font-medium text-foreground">{{ task.pemberi }}</span>
-          </div>
-          <div class="flex items-center justify-between gap-3 px-4 py-3">
-            <span class="flex items-center gap-2 text-sm text-muted-foreground">
-              <PhCalendarPlus :size="16" class="shrink-0" />
-              Diassign
-            </span>
-            <span class="text-sm font-medium text-foreground">{{ task.diassign }}</span>
-          </div>
-          <div class="flex items-center justify-between gap-3 px-4 py-3">
-            <span class="flex items-center gap-2 text-sm text-muted-foreground">
-              <PhCalendarDots :size="16" class="shrink-0" />
-              Batas waktu
-            </span>
-            <span class="text-sm font-medium text-foreground">{{ task.due }}</span>
-          </div>
-          <div class="flex items-center justify-between gap-3 px-4 py-3">
-            <span class="flex items-center gap-2 text-sm text-muted-foreground">
-              <PhClock :size="16" class="shrink-0" />
-              Update terakhir
-            </span>
-            <span class="text-sm font-medium text-foreground">{{ task.waktuUpdate }} WIB</span>
-          </div>
-          <div class="flex items-center justify-between gap-3 px-4 py-3">
-            <span class="flex items-center gap-2 text-sm text-muted-foreground">
-              <PhPaperclip :size="16" class="shrink-0" />
-              Lampiran
-            </span>
-            <span class="text-sm font-medium text-foreground">{{ lampiran.length }} berkas</span>
-          </div>
-        </div>
-      </div>
+      <TaskMetaInfo :task="task" :jumlah-lampiran="lampiran.length" />
 
-      <div>
-        <h2 class="font-semibold text-foreground mb-1.5">Lampiran</h2>
+      <TaskAttachmentList :lampiran="lampiran" />
 
-        <div v-if="lampiran.length" class="card">
-          <div class="card__body p-0 divide-y divide-black/10 dark:divide-white/15">
-            <div v-for="l in lampiran" :key="l.nama" class="flex items-center gap-3 px-4 py-3">
-              <span class="panel__icon shrink-0">
-                <PhPaperclip :size="16" weight="bold" />
-              </span>
-              <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-foreground line-clamp-1">{{ l.nama }}</p>
-                <p class="text-xs text-muted-foreground mt-0.5">{{ l.ukuran }} · {{ l.tanggal }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-else class="card">
-          <div class="card__body p-6 text-center">
-            <p class="text-sm text-muted-foreground">Belum ada lampiran.</p>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h2 class="font-semibold text-foreground mb-1.5">Progres</h2>
-        <div class="card">
-          <div class="card__body p-4 gap-3 items-center text-center">
-            <ProgressRing :nilai="task.progres" />
-
-            <p class="text-xs text-muted-foreground leading-relaxed">
-              <template v-if="terkunci">
-                Dikunci karena task sedang {{ statusLabel[task.status].toLowerCase() }}.
-              </template>
-              <template v-else>
-                Update terakhir {{ task.waktuUpdate }} WIB.
-              </template>
-            </p>
-
-            <button
-              type="button"
-              class="button button--primary w-full"
-              :disabled="terkunci"
-              @click="bukaSheet"
-            >
-              Update progres
-            </button>
-          </div>
-        </div>
-      </div>
+      <TaskProgress :task="task" :terkunci="terkunci" :status-label="statusLabel" @open-sheet="bukaSheet" />
 
       <div>
         <h2 class="font-semibold text-foreground mb-1.5">Update Progres</h2>
@@ -311,18 +227,15 @@
 import { computed, ref } from "vue"
 import { useRoute } from "vue-router"
 import {
-  PhCalendarDots,
-  PhCalendarPlus,
   PhChatCircleText,
-  PhClock,
-  PhPaperclip,
   PhImageSquare,
-  PhUserCircle,
   PhX,
 } from "@phosphor-icons/vue"
 import AppPageLayout from "../../layouts/AppPageLayout.vue"
 import BottomSheet from "../../components/ui/BottomSheet.vue"
-import ProgressRing from "../../components/task/ProgressRing.vue"
+import TaskAttachmentList from "../../components/task/TaskAttachmentList.vue"
+import TaskMetaInfo from "../../components/task/TaskMetaInfo.vue"
+import TaskProgress from "../../components/task/TaskProgress.vue"
 import TaskStatusBadge from "../../components/task/TaskStatusBadge.vue"
 import { statusLabel, statusTerkunci, tasks } from "../../data/tasks"
 
