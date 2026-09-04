@@ -78,21 +78,21 @@
       <div>
         <h2 class="font-semibold text-foreground mb-1.5">Progres</h2>
         <div class="card">
-          <div class="card__body p-4 gap-3">
-            <div class="flex items-end justify-between gap-3">
-              <span class="text-3xl font-semibold text-foreground tabular-nums leading-none">
-                {{ task.progres }}<span class="text-lg text-muted-foreground">%</span>
-              </span>
-              <span v-if="terkunci" class="text-xs text-muted-foreground text-right">
-                Dikunci karena task sedang {{ statusLabel[task.status].toLowerCase() }}.
-              </span>
-            </div>
+          <div class="card__body p-4 gap-3 items-center text-center">
+            <ProgressRing :nilai="task.progres" />
 
-            <ProgressBar :nilai="task.progres" />
+            <p class="text-xs text-muted-foreground leading-relaxed">
+              <template v-if="terkunci">
+                Dikunci karena task sedang {{ statusLabel[task.status].toLowerCase() }}.
+              </template>
+              <template v-else>
+                Update terakhir {{ task.waktuUpdate }} WIB.
+              </template>
+            </p>
 
             <button
               type="button"
-              class="button button--primary"
+              class="button button--primary w-full"
               :disabled="terkunci"
               @click="bukaSheet"
             >
@@ -322,7 +322,7 @@ import {
 } from "@phosphor-icons/vue"
 import AppPageLayout from "../../layouts/AppPageLayout.vue"
 import BottomSheet from "../../components/ui/BottomSheet.vue"
-import ProgressBar from "../../components/task/ProgressBar.vue"
+import ProgressRing from "../../components/task/ProgressRing.vue"
 import TaskStatusBadge from "../../components/task/TaskStatusBadge.vue"
 import { statusLabel, statusTerkunci, tasks } from "../../data/tasks"
 
