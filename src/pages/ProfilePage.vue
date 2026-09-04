@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <button type="button" class="card text-left active:scale-[0.99] transition-transform">
+      <button type="button" class="card text-left active:scale-[0.99] transition-transform" @click="keluar">
         <div class="card__body flex-row items-center gap-3 p-3.5">
           <PhSignOut :size="18" weight="regular" class="text-danger shrink-0" />
           <p class="text-sm font-medium text-danger flex-1">Keluar</p>
@@ -40,8 +40,11 @@
 
 <script setup>
 import AppPageLayout from "../layouts/AppPageLayout.vue"
+import { useRouter } from "vue-router"
 import { PhUser, PhLockKey, PhMoonStars, PhCaretRight, PhSignOut } from "@phosphor-icons/vue"
+import { clearSession } from "../stores/auth"
 
+const router = useRouter()
 const nama = "Harithya Wisesa"
 const email = "harithya77@gmail.com"
 
@@ -50,4 +53,9 @@ const menu = [
   { label: "Kata Sandi", icon: PhLockKey, to: { name: "profile-password" } },
   { label: "Tampilan", icon: PhMoonStars, to: { name: "profile-appearance" } },
 ]
+
+function keluar() {
+  clearSession()
+  router.push({ name: "login" })
+}
 </script>
