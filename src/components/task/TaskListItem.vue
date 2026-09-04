@@ -1,9 +1,6 @@
 <template>
-  <RouterLink
-    :to="{ name: 'task-detail', params: { id: task.id } }"
-    class="card active:scale-[0.99] transition-transform block"
-    :class="{ 'border-danger/40': task.pk }"
-  >
+  <RouterLink :to="{ name: 'task-detail', params: { id: task.id } }"
+    class="card active:scale-[0.99] transition-transform block" :class="{ 'border-danger/40': task.pk }">
     <div class="card__body p-3 gap-2.5">
       <div class="flex items-start gap-2">
         <span v-if="task.pk" class="badge badge--danger shrink-0 mt-0.5">PK</span>

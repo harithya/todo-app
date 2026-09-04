@@ -34,21 +34,25 @@
         <div v-if="terfilter.length" class="flex flex-col gap-3">
           <TaskListItem v-for="t in terfilter" :key="t.id" :task="t" />
         </div>
-        <div v-else class="empty-state empty-state--sm">
-          <p class="empty-state__title">Tidak ada task</p>
-          <p class="empty-state__text">Belum ada task dengan status ini.</p>
+        <div v-else>
+          <EmptyState title="Tidak ada task" text="Belum ada task dengan status ini." />
         </div>
       </section>
     </div>
+
+    <FloatingActionButton :visible="fabVisible" />
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from "vue"
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
 import TaskListItem from "../../components/task/TaskListItem.vue"
+import FloatingActionButton from "../../components/ui/FloatingActionButton.vue"
+import EmptyState from "../../components/ui/EmptyState.vue"
 import { tasks } from "../../data/tasks"
 
 const aktif = ref("semua")
+const fabVisible = ref(tasks.filter((t) => t.progres < 100).length <= 4)
 
 const hitung = (status) => tasks.filter((t) => t.status === status).length
 
@@ -78,8 +82,29 @@ const terfilter = computed(() => {
   } else {
     hasil = tasks.filter((t) => t.progres < 100)
   }
-  // sort() memutasi array asli, jadi salin dulu.
   return [...hasil].sort((a, b) => perluPerhatian(b) - perluPerhatian(a))
 })
 
+let lastScroll = 0
+
+function onScroll() {
+  const y = window.scrollY
+  lastScroll = y
+  if (y < 10 && terfilter.value.length > 4) {
+    fabVisible.value = false
+  } else {
+    fabVisible.value = true
+  }
+}
+
+onMounted(() => window.addEventListener("scroll", onScroll, { passive: true }))
+onUnmounted(() => window.removeEventListener("scroll", onScroll))
+
+watch(aktif, () => {
+  window.scrollTo(0, 0)
+  lastScroll = 0
+  nextTick(() => { fabVisible.value = terfilter.value.length <= 4 })
+})
+
+watch(terfilter, (val) => { fabVisible.value = val.length <= 4 })
 </script>
