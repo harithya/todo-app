@@ -5,15 +5,25 @@
       <h1 class="text-xl font-semibold text-white mt-0.5">Hallo Harithya Wisesa</h1>
     </header>
 
-    <div class="px-5 flex flex-col gap-5 -mt-9">
-      <section class="card">
-        <div class="grid grid-cols-3 divide-x divide-black/10 dark:divide-white/15">
-          <div v-for="s in statistik" :key="s.label" class="py-4 text-center">
-            <p class="text-lg font-semibold text-foreground leading-none">{{ s.value }}</p>
-            <p class="text-xs text-muted-foreground mt-1.5 px-1.5 line-clamp-1">{{ s.label }}</p>
-          </div>
+    <div class="px-5 flex flex-col gap-5 -mt-6">
+      <div class="flex items-center gap-2">
+        <div class="relative flex-1">
+          <PhMagnifyingGlass :size="18" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+          <input
+            v-model="search"
+            type="text"
+            class="input ps-10 focus:outline-none focus:ring-0"
+            placeholder="Cari task..."
+          />
         </div>
-      </section>
+        <button
+          type="button"
+          class="flex items-center justify-center size-10 shrink-0 rounded-xl border border-border bg-surface active:scale-95 transition-transform"
+          @click="urut = urut === 'terbaru' ? 'terlama' : 'terbaru'"
+        >
+          <PhArrowsDownUp :size="18" class="text-muted-foreground" />
+        </button>
+      </div>
 
       <section>
         <div class="mb-3 -mx-5 px-5 overflow-x-auto tab-scroll">
@@ -46,15 +56,16 @@
 
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
+import { PhMagnifyingGlass, PhArrowsDownUp } from "@phosphor-icons/vue"
 import TaskListItem from "../../components/task/TaskListItem.vue"
 import FloatingActionButton from "../../components/ui/FloatingActionButton.vue"
 import EmptyState from "../../components/ui/EmptyState.vue"
 import { tasks } from "../../data/tasks"
 
 const aktif = ref("semua")
+const search = ref("")
+const urut = ref("terbaru")
 const fabVisible = ref(tasks.filter((t) => t.progres < 100).length <= 4)
-
-const hitung = (status) => tasks.filter((t) => t.status === status).length
 
 const filter = [
   { key: "semua", label: "Semua" },
@@ -67,11 +78,12 @@ const filter = [
 
 const perluPerhatian = (t) => (t.pk || t.status === "revisi" || t.status === "tambahanWaktu") && t.status !== "selesai"
 
-const statistik = computed(() => [
-  { label: "Dikerjakan", value: hitung("baru") + hitung("dikerjakan") },
-  { label: "Menunggu", value: hitung("menunggu") },
-  { label: "Revisi", value: hitung("revisi") },
-])
+const bulan = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, Mei: 4, Jun: 5, Jul: 6, Agu: 7, Sep: 8, Okt: 9, Nov: 10, Des: 11 }
+function parseTanggal(s) {
+  const m = s.match(/(\d+)\s(\w+)/)
+  if (!m) return 0
+  return new Date(2026, bulan[m[2]] ?? 0, Number(m[1])).getTime()
+}
 
 const terfilter = computed(() => {
   let hasil = tasks
@@ -82,7 +94,17 @@ const terfilter = computed(() => {
   } else {
     hasil = tasks.filter((t) => t.progres < 100)
   }
-  return [...hasil].sort((a, b) => perluPerhatian(b) - perluPerhatian(a))
+  if (search.value.trim()) {
+    const q = search.value.trim().toLowerCase()
+    hasil = hasil.filter((t) => t.judul.toLowerCase().includes(q))
+  }
+  const sorted = [...hasil].sort((a, b) => {
+    const pa = perluPerhatian(a), pb = perluPerhatian(b)
+    if (pa !== pb) return pb - pa
+    const da = parseTanggal(a.diassign), db = parseTanggal(b.diassign)
+    return urut.value === "terbaru" ? db - da : da - db
+  })
+  return sorted
 })
 
 let lastScroll = 0

@@ -337,6 +337,11 @@ body {
   font-weight: var(--font-weight-normal);
 }
 
+.input:focus {
+  box-shadow: none;
+  border-color: var(--color-border);
+}
+
 @theme {
   --font-sans: "Montserrat", system-ui, sans-serif;
   --color-primary: #2fa6a0;

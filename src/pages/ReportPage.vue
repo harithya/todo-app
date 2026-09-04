@@ -1,6 +1,15 @@
 <template>
   <AppPageLayout title="Laporan">
     <div class="flex flex-col gap-5">
+      <section class="grid grid-cols-3 gap-3">
+        <div v-for="s in statistikHome" :key="s.label" class="card">
+          <div class="card__body py-4 px-3 text-center">
+            <p class="text-lg font-semibold text-foreground leading-none">{{ s.value }}</p>
+            <p class="text-xs text-muted-foreground mt-1.5 line-clamp-1">{{ s.label }}</p>
+          </div>
+        </div>
+      </section>
+
       <section class="flex flex-col gap-2">
         <VueDatePicker
           v-model="rentang"
@@ -105,7 +114,7 @@ import { id } from "date-fns/locale"
 import AppPageLayout from "../layouts/AppPageLayout.vue"
 import ProgressLine from "../components/report/ProgressLine.vue"
 import StatusDonut from "../components/report/StatusDonut.vue"
-import { statusLabel } from "../data/tasks"
+import { statusLabel, tasks } from "../data/tasks"
 import {
   formatDurasi,
   kumulatifSelesai,
@@ -150,5 +159,13 @@ const statistik = computed(() => [
   { label: "Selesai", value: ringkas.value.selesai },
   { label: "Rata-rata durasi", value: formatDurasi(ringkas.value.rataMenit) },
   { label: "Median durasi", value: formatDurasi(ringkas.value.medianMenit) },
+])
+
+const hitung = (status) => tasks.filter((t) => t.status === status).length
+
+const statistikHome = computed(() => [
+  { label: "Dikerjakan", value: hitung("baru") + hitung("dikerjakan") },
+  { label: "Menunggu", value: hitung("menunggu") },
+  { label: "Revisi", value: hitung("revisi") },
 ])
 </script>
