@@ -1,14 +1,6 @@
 <template>
   <AppPageLayout title="Laporan">
     <div class="flex flex-col gap-5">
-      <!-- Filter di atas semua chart, bukan tersebar per chart. Tanpa bungkus
-           card: picker-nya sudah punya bidang input sendiri, jadi kartu di
-           sekelilingnya cuma menambah satu lapis border tanpa guna.
-
-           v14 mengelompokkan sebagian besar opsi ke objek konfigurasi. Nama prop
-           gaya v13 (`format`, `enable-time-picker`, `clearable`, `select-text`)
-           diterima tanpa protes lalu diabaikan diam-diam, jadi setiap opsi di
-           bawah memakai bentuk v14. -->
       <section class="flex flex-col gap-2">
         <VueDatePicker
           v-model="rentang"
@@ -107,9 +99,6 @@
 <script setup>
 import { computed, ref } from "vue"
 import { PhArrowDown, PhArrowUp } from "@phosphor-icons/vue"
-// v14 memakai named export, bukan default. Prop `locale` menerima objek Locale
-// date-fns — bukan string seperti "id-ID"; string membuat format() melempar
-// "Cannot read properties of undefined (reading 'preprocessor')".
 import { VueDatePicker } from "@vuepic/vue-datepicker"
 import { format as formatTanggal } from "date-fns"
 import { id } from "date-fns/locale"
@@ -131,9 +120,6 @@ const bawaan = [awalan.dari, awalan.sampai]
 
 const rentang = ref([...bawaan])
 
-// v14 mengganti prop `format` tunggal dengan objek `formats`; `formats.input`
-// boleh berupa fungsi yang menerima seluruh array rentang, jadi separatornya
-// bisa ditentukan sendiri alih-alih memakai bawaan komponen.
 function formatRentang(tanggal) {
   const daftar = (Array.isArray(tanggal) ? tanggal : [tanggal]).filter(Boolean)
   if (!daftar.length) return ""

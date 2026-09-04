@@ -343,7 +343,6 @@ const progres = ref(task.value?.progres ?? 0)
 const deskripsi = ref("")
 const gambar = ref(null)
 
-// Wajib ada perubahan nyata: persen bergeser, atau ada cerita/bukti yang ditambahkan.
 const bisaSimpan = computed(
   () => progres.value !== task.value.progres || deskripsi.value.trim() || gambar.value,
 )
@@ -358,19 +357,16 @@ function bukaSheet() {
   sheet.value?.open()
 }
 
-// Form dikosongkan tiap sheet ditutup supaya sisa ketikan tidak terbawa ke update berikutnya.
 function resetForm() {
   deskripsi.value = ""
   gambar.value = null
 }
 
-// UI dummy: tidak ada file picker sungguhan, cukup ambil salah satu gambar contoh.
 function pilihGambar() {
   const contoh = ["/lampiran/1.svg", "/lampiran/2.svg", "/lampiran/3.svg", "/lampiran/4.svg"]
   gambar.value = contoh[Math.floor(Math.random() * contoh.length)]
 }
 
-// UI dummy: perubahan hanya hidup selama halaman terbuka, tidak disimpan ke mana pun.
 function simpan() {
   task.value.progres = progres.value
   task.value.status =

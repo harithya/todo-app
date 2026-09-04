@@ -30,7 +30,6 @@
 import { reactive } from "vue"
 import AppPageLayout from "../../layouts/AppPageLayout.vue"
 
-// UI dummy: perubahan hanya hidup selama halaman terbuka, tidak disimpan ke mana pun.
 const form = reactive({
   nama: "Harithya Wisesa",
   email: "harithya@perusahaan.com",

@@ -60,8 +60,6 @@ const filter = [
   { key: "selesai", label: "Selesai" },
 ]
 
-// PK dan revisi sama-sama menuntut tindakan hari ini. Keduanya tidak dipisah ke tab
-// sendiri, tapi diangkat ke urutan teratas di dalam tab mana pun yang sedang dibuka.
 const perluPerhatian = (t) => (t.pk || t.status === "revisi") && t.status !== "selesai"
 
 const statistik = computed(() => [
@@ -77,9 +75,6 @@ const terfilter = computed(() => {
   } else if (aktif.value !== "semua") {
     hasil = tasks.filter((t) => t.status === aktif.value)
   } else {
-    // Tab "Semua" adalah daftar kerja, bukan arsip: yang sudah 100% tidak lagi
-    // menuntut tindakan dan cuma mendorong task berjalan ke bawah layar. Tetap
-    // terjangkau lewat chip "Menunggu" dan "Selesai".
     hasil = tasks.filter((t) => t.progres < 100)
   }
   // sort() memutasi array asli, jadi salin dulu.
