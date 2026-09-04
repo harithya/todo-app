@@ -140,34 +140,25 @@ export function komposisiStatus(daftar) {
   return hitung
 }
 
+// Hanya task yang punya durasi yang masuk daftar rincian. Task yang belum
+// selesai tidak punya angka untuk dibandingkan, dan barisnya cuma berisi strip.
+// Konsekuensinya jumlah baris di sini tidak sama dengan total task di donat —
+// itu memang disengaja.
 export function rincian(daftar, urut = "durasi") {
-  const baris = daftar.map((t) => ({
-    id: t.id,
-    judul: t.judul,
-    divisi: t.divisi,
-    status: t.status,
-    menit: durasiMenit(t),
-    mulai: parseWaktu(t.diassign),
-    selesai: selesaiPada(t),
-  }))
-
-  // Task tanpa durasi selalu di bawah, apa pun urutannya — biar bagian atas
-  // daftar tidak dipenuhi baris "—".
-  return baris.sort((a, b) => {
-    if (urut === "durasi") {
-      if (a.menit == null && b.menit == null) return b.mulai - a.mulai
-      if (a.menit == null) return 1
-      if (b.menit == null) return -1
-      return b.menit - a.menit
-    }
-    return (b.selesai || b.mulai) - (a.selesai || a.mulai)
-  })
+  return daftar
+    .map((t) => ({
+      id: t.id,
+      judul: t.judul,
+      divisi: t.divisi,
+      status: t.status,
+      menit: durasiMenit(t),
+      mulai: parseWaktu(t.diassign),
+      selesai: selesaiPada(t),
+    }))
+    .filter((r) => r.menit != null)
+    .sort((a, b) => (urut === "durasi" ? b.menit - a.menit : b.selesai - a.selesai))
 }
 
-// Deret kumulatif task selesai per hari. Hari tanpa penyelesaian tetap
-// dikeluarkan dengan nilai yang sama seperti hari sebelumnya — kalau hari kosong
-// dilewati, garisnya jadi bohong: bagian datar (akhir pekan, macet) hilang dan
-// jarak antar titik tidak lagi mewakili waktu yang sama.
 export function kumulatifSelesai(daftar) {
   const selesai = daftar.map(selesaiPada).filter(Boolean).sort((a, b) => a - b)
   if (!selesai.length) return []
