@@ -76,8 +76,14 @@ const terfilter = computed(() => {
     hasil = tasks.filter((t) => t.status === "dikerjakan" || t.status === "baru")
   } else if (aktif.value !== "semua") {
     hasil = tasks.filter((t) => t.status === aktif.value)
+  } else {
+    // Tab "Semua" adalah daftar kerja, bukan arsip: yang sudah 100% tidak lagi
+    // menuntut tindakan dan cuma mendorong task berjalan ke bawah layar. Tetap
+    // terjangkau lewat chip "Menunggu" dan "Selesai".
+    hasil = tasks.filter((t) => t.progres < 100)
   }
   // sort() memutasi array asli, jadi salin dulu.
   return [...hasil].sort((a, b) => perluPerhatian(b) - perluPerhatian(a))
 })
+
 </script>
