@@ -292,41 +292,44 @@ body {
   min-height: var(--input-height);
 }
 
-/* vue-datepicker v14 tidak punya kelas tema gelap — semuanya lewat CSS variable.
-   Dipetakan sekali ke token aplikasi di sini, jadi mode gelap ikut otomatis
-   begitu token di `.dark` berubah; tidak perlu satu pun override `.dark` lagi. */
+/* vue-datepicker v14 — `:root` memetakan variabel struktural ke token aplikasi.
+   Variabel warna harus di-override di `.dark` dengan `!important` supaya menang
+   atas definisi `:root` library yang dimuat belakangan. */
 :root {
   --dp-font-family: inherit;
   --dp-font-size: var(--text-sm);
   --dp-border-radius: var(--radius-md);
   --dp-cell-border-radius: 9999px;
   --dp-cell-size: 34px;
+}
 
-  --dp-background-color: var(--color-surface);
-  --dp-menu-border-color: var(--color-border);
-  --dp-border-color: var(--color-border-strong);
-  --dp-border-color-hover: var(--color-primary);
-  --dp-border-color-focus: var(--color-primary);
-  --dp-text-color: var(--color-foreground);
-  --dp-secondary-color: var(--color-muted-foreground);
-  --dp-icon-color: var(--color-muted-foreground);
-  --dp-hover-color: var(--color-surface-2);
-  --dp-hover-text-color: var(--color-foreground);
-  --dp-hover-icon-color: var(--color-foreground);
-
-  --dp-primary-color: var(--color-primary);
-  --dp-primary-text-color: var(--color-primary-foreground);
-  --dp-primary-disabled-color: var(--color-primary-200);
-  --dp-range-between-dates-background-color: var(--color-primary-50);
-  --dp-range-between-dates-text-color: var(--color-primary-emphasis);
-  --dp-range-between-border-color: var(--color-primary-100);
-
-  --dp-disabled-color: var(--color-surface-2);
-  --dp-disabled-color-text: var(--color-muted-foreground);
-  --dp-danger-color: var(--color-danger);
-  --dp-success-color: var(--color-primary);
-  --dp-marker-color: var(--color-danger);
-  --dp-highlight-color: var(--color-primary-50);
+.dark {
+  --dp-background-color: var(--color-surface) !important;
+  --dp-menu-border-color: var(--color-border) !important;
+  --dp-border-color: var(--color-border-strong) !important;
+  --dp-border-color-hover: var(--color-primary) !important;
+  --dp-border-color-focus: var(--color-primary) !important;
+  --dp-text-color: var(--color-foreground) !important;
+  --dp-secondary-color: var(--color-muted-foreground) !important;
+  --dp-icon-color: var(--color-muted-foreground) !important;
+  --dp-hover-color: var(--color-surface-2) !important;
+  --dp-hover-text-color: var(--color-foreground) !important;
+  --dp-hover-icon-color: var(--color-foreground) !important;
+  --dp-primary-color: var(--color-primary) !important;
+  --dp-primary-text-color: var(--color-primary-foreground) !important;
+  --dp-primary-disabled-color: var(--color-primary-200) !important;
+  --dp-range-between-dates-background-color: var(--color-primary-50) !important;
+  --dp-range-between-dates-text-color: var(--color-primary-emphasis) !important;
+  --dp-range-between-border-color: var(--color-primary-100) !important;
+  --dp-disabled-color: var(--color-surface-2) !important;
+  --dp-disabled-color-text: var(--color-muted-foreground) !important;
+  --dp-danger-color: var(--color-danger) !important;
+  --dp-success-color: var(--color-primary) !important;
+  --dp-marker-color: var(--color-danger) !important;
+  --dp-highlight-color: var(--color-primary-50) !important;
+  --dp-tooltip-color: var(--color-surface) !important;
+  --dp-scroll-bar-background: var(--color-surface-2) !important;
+  --dp-scroll-bar-color: var(--color-border) !important;
 }
 
 /* Field pemicunya disamakan dengan `.input` Stisla supaya sebaris dengan kontrol
@@ -340,6 +343,45 @@ body {
 .input:focus {
   box-shadow: none;
   border-color: var(--color-border);
+}
+
+/* Unovis chart dark mode */
+.dark .vis-axis-label,
+.dark .vis-tick-label {
+  fill: var(--color-muted-foreground);
+}
+.dark .vis-axis-line,
+.dark .vis-tick-line {
+  stroke: var(--color-border);
+}
+.dark .vis-grid-line {
+  stroke: var(--color-border);
+  stroke-opacity: 0.4;
+}
+.dark .vis-tooltip {
+  background: var(--color-surface) !important;
+  color: var(--color-foreground) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+/* Chart container */
+.dark .card {
+  background: var(--color-surface);
+}
+
+/* VueDatePicker — extra dark overrides for elements using hardcoded values */
+.dark .dp__menu {
+  background: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+}
+.dark .dp__action_button {
+  background: var(--color-surface-2) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+.dark .dp__action_button--active {
+  background: var(--color-primary) !important;
+  color: var(--color-primary-foreground) !important;
 }
 
 @theme {

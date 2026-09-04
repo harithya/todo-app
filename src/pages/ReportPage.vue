@@ -1,15 +1,6 @@
 <template>
   <AppPageLayout title="Laporan">
     <div class="flex flex-col gap-5">
-      <section class="grid grid-cols-3 gap-3">
-        <div v-for="s in statistikHome" :key="s.label" class="card">
-          <div class="card__body py-4 px-3 text-center">
-            <p class="text-lg font-semibold text-foreground leading-none">{{ s.value }}</p>
-            <p class="text-xs text-muted-foreground mt-1.5 line-clamp-1">{{ s.label }}</p>
-          </div>
-        </div>
-      </section>
-
       <section class="flex flex-col gap-2">
         <VueDatePicker
           v-model="rentang"
@@ -22,7 +13,6 @@
           placeholder="Pilih rentang tanggal"
           auto-apply
         />
-
         <button
           v-if="bukanDefault"
           type="button"
@@ -33,11 +23,29 @@
         </button>
       </section>
 
-      <section class="grid grid-cols-2 gap-3">
-        <div v-for="s in statistik" :key="s.label" class="card">
-          <div class="card__body py-4 px-3 text-center">
-            <p class="text-lg font-semibold text-foreground leading-none tabular-nums">{{ s.value }}</p>
-            <p class="text-xs text-muted-foreground mt-1.5 line-clamp-1">{{ s.label }}</p>
+      <section class="card">
+        <div class="card__body p-0 divide-y divide-black/10 dark:divide-white/15">
+          <div v-for="s in statistikTask" :key="s.label" class="flex items-center justify-between px-4 py-3">
+            <span class="text-sm text-muted-foreground">{{ s.label }}</span>
+            <span class="text-sm font-semibold text-foreground tabular-nums">{{ s.value }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__body p-0 divide-y divide-black/10 dark:divide-white/15">
+          <div v-for="s in statistik" :key="s.label" class="flex items-center justify-between px-4 py-3">
+            <span class="text-sm text-muted-foreground">{{ s.label }}</span>
+            <span class="text-sm font-semibold text-foreground tabular-nums">{{ s.value }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__body p-0 divide-y divide-black/10 dark:divide-white/15">
+          <div v-for="s in statistikDurasi" :key="s.label" class="flex items-center justify-between px-4 py-3">
+            <span class="text-sm text-muted-foreground">{{ s.label }}</span>
+            <span class="text-sm font-semibold text-foreground tabular-nums">{{ s.value }}</span>
           </div>
         </div>
       </section>
@@ -154,18 +162,25 @@ const ringkas = computed(() => ringkasan(daftar.value))
 const deret = computed(() => kumulatifSelesai(daftar.value))
 const baris = computed(() => rincian(daftar.value, urut.value))
 
-const statistik = computed(() => [
-  { label: "Total task", value: ringkas.value.total },
-  { label: "Selesai", value: ringkas.value.selesai },
-  { label: "Rata-rata durasi", value: formatDurasi(ringkas.value.rataMenit) },
-  { label: "Median durasi", value: formatDurasi(ringkas.value.medianMenit) },
-])
-
 const hitung = (status) => tasks.filter((t) => t.status === status).length
 
-const statistikHome = computed(() => [
+const statistikTask = computed(() => [
   { label: "Dikerjakan", value: hitung("baru") + hitung("dikerjakan") },
   { label: "Menunggu", value: hitung("menunggu") },
   { label: "Revisi", value: hitung("revisi") },
+  { label: "Tambahan Waktu", value: hitung("tambahanWaktu") },
+  { label: "Selesai", value: hitung("selesai") },
+])
+
+const statistik = computed(() => [
+  { label: "Total task", value: ringkas.value.total },
+  { label: "Selesai", value: ringkas.value.selesai },
+  { label: "Belum selesai", value: ringkas.value.belum },
+  { label: "Persentase", value: `${ringkas.value.persenSelesai}%` },
+])
+
+const statistikDurasi = computed(() => [
+  { label: "Rata-rata durasi", value: formatDurasi(ringkas.value.rataMenit) },
+  { label: "Median durasi", value: formatDurasi(ringkas.value.medianMenit) },
 ])
 </script>

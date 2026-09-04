@@ -21,8 +21,6 @@
             saved === "dark" ||
             (saved !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
           if (dark) document.documentElement.classList.add("dark");
-          var meta = document.querySelector('meta[name="theme-color"]');
-          if (meta) meta.setAttribute("content", dark ? "#1a1a1a" : "#2fa6a0");
         } catch (e) {}
       })();
     </script>
