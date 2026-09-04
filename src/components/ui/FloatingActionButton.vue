@@ -5,6 +5,7 @@
         v-show="visible"
         type="button"
         class="button button--primary rounded-full pointer-events-auto"
+        @click="$emit('click')"
       >
         <PhPlus :size="20" weight="bold" />
         Tambah

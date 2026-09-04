@@ -50,18 +50,20 @@
       </section>
     </div>
 
-    <FloatingActionButton :visible="fabVisible" />
+    <FloatingActionButton :visible="fabVisible" @click="router.push({ name: 'task-create' })" />
   </div>
 </template>
 
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
+import { useRouter } from "vue-router"
 import { PhMagnifyingGlass, PhArrowsDownUp } from "@phosphor-icons/vue"
 import TaskListItem from "../../components/task/TaskListItem.vue"
 import FloatingActionButton from "../../components/ui/FloatingActionButton.vue"
 import EmptyState from "../../components/ui/EmptyState.vue"
 import { tasks } from "../../data/tasks"
 
+const router = useRouter()
 const aktif = ref("semua")
 const search = ref("")
 const urut = ref("terbaru")

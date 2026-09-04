@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"
 import HomePage from "../pages/task/HomePage.vue"
+import CreateTaskPage from "../pages/task/CreateTaskPage.vue"
 import TaskDetailPage from "../pages/task/TaskDetailPage.vue"
 import ReportPage from "../pages/ReportPage.vue"
 import AnnouncementPage from "../pages/AnnouncementPage.vue"
@@ -11,6 +12,7 @@ import AppearancePage from "../pages/profile/AppearancePage.vue"
 
 const routes = [
   { path: "/", name: "home", component: HomePage },
+  { path: "/task/buat", name: "task-create", component: CreateTaskPage, meta: { hideBottomNav: true } },
   { path: "/task/:id", name: "task-detail", component: TaskDetailPage, meta: { hideBottomNav: true } },
   { path: "/laporan", name: "report", component: ReportPage },
   { path: "/pengumuman", name: "announcement", component: AnnouncementPage },

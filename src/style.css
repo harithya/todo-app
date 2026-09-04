@@ -193,7 +193,7 @@
     font-size: var(--text-sm);
     font-weight: 600;
     color: var(--color-foreground);
-    margin-bottom: 0.75rem;
+    margin-bottom: 1.2rem;
   }
 
   .panel__icon {
@@ -290,6 +290,11 @@ body {
   display: flex;
   align-items: center;
   min-height: var(--input-height);
+  direction: ltr;
+}
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  margin-inline-start: auto;
+  margin-inline-end: 0;
 }
 
 /* vue-datepicker v14 — `:root` memetakan variabel struktural ke token aplikasi.
