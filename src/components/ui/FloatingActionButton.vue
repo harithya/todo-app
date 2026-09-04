@@ -4,7 +4,7 @@
       <button
         v-show="visible"
         type="button"
-        class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-primary text-primary-foreground font-medium text-sm shadow-lg shadow-primary/30 active:scale-95 transition-transform pointer-events-auto"
+        class="button button--primary rounded-full pointer-events-auto"
       >
         <PhPlus :size="20" weight="bold" />
         Tambah
