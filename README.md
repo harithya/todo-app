@@ -1,5 +1,19 @@
-# Vue 3 + Vite
+# todo-app
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Aplikasi tugas harian untuk assignee — Vue 3 + Vite, Tailwind v4, Stisla.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## Menjalankan
+
+```bash
+npm install
+npm run dev
+```
+
+## Halaman
+
+- **Beranda** — daftar task dengan filter status, progres, dan penanda PK
+- **Laporan** — garis progres kumulatif, donat selesai vs belum, rincian durasi per task
+- **Pengumuman** — pengumuman internal beserta halaman detailnya
+- **Profil** — edit profil, kata sandi, dan tema (terang / gelap / ikut sistem)
+
+Data masih dummy statis di `src/data/`. Lihat `AGENTS.md` untuk konvensi struktur folder.

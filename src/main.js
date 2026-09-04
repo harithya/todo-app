@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import '@stisla/css'
 import '@webzlodimir/vue-bottom-sheet/dist/style.css'
+import '@vuepic/vue-datepicker/dist/main.css'
 import './style.css'
 import '@stisla/vanilla'
 import App from './App.vue'
