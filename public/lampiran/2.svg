@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320">
+  <rect width="480" height="320" fill="#4e7500"/>
+  <rect x="0" y="0" width="480" height="320" fill="#000" opacity="0.08"/>
+  <circle cx="150" cy="120" r="46" fill="#fff" opacity="0.22"/>
+  <path d="M60 260 L180 150 L260 220 L330 170 L420 260 Z" fill="#fff" opacity="0.28"/>
+  <text x="240" y="300" font-family="system-ui, sans-serif" font-size="22" font-weight="600"
+        fill="#fff" opacity="0.85" text-anchor="middle">Draft banner</text>
+</svg>

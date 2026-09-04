@@ -1,298 +1,315 @@
 @import "tailwindcss";
 
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/* Dark mode berbasis class `.dark` pada <html> (di-toggle dari halaman profile). */
+@custom-variant dark (&:where(.dark, .dark *));
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
+@layer base {
+  :root {
+    --input-height: --spacing(10);
+    --input-font-size: var(--text-base);
+    --input-padding-inline: --spacing(3);
+    --button-height: --spacing(10);
+    --button-font-size: var(--text-sm);
+    --button-padding-inline: --spacing(4);
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+/* Tema gelap: override token warna milik aplikasi + komponen Stisla. */
+.dark {
+  --color-foreground: oklch(92% 0 0);
+  --color-muted-foreground: oklch(70% 0 0);
+  --color-surface: oklch(13% 0 0);
+  --color-surface-2: oklch(19% 0 0);
+  --color-border: oklch(25% 0 0);
+  --color-border-strong: oklch(32% 0 0);
+  --color-primary-50: oklch(24% 0.03 190);
+  --color-primary-100: oklch(28% 0.04 190);
+  --color-primary-200: oklch(34% 0.05 190);
+  /* Di tema terang `primary-emphasis` adalah teal tua di atas latar terang.
+     Di tema gelap perannya terbalik: harus terang supaya terbaca di atas
+     `primary-50` yang ikut menggelap. Tanpa ini teks aksen nyaris hilang. */
+  --color-primary-emphasis: #89d5cf;
+
+  /* Stisla */
+  --card-bg: oklch(16% 0 0);
+  --card-border-color: oklch(25% 0 0);
+  --card-color: oklch(92% 0 0);
+  --input-bg: oklch(19% 0 0);
+  --input-border-color: oklch(28% 0 0);
+  --input-color: oklch(92% 0 0);
+  --input-placeholder: oklch(55% 0 0);
+  --textarea-bg: oklch(19% 0 0);
+  --textarea-border-color: oklch(28% 0 0);
+  --textarea-color: oklch(92% 0 0);
+  --textarea-placeholder: oklch(55% 0 0);
+  --field-label-color: oklch(78% 0 0);
+  --field-error-color: oklch(66% 0.19 27);
+  --button-color: oklch(92% 0 0);
+  --tabs-list-bg: oklch(19% 0 0);
+  --tabs-trigger-color-hover: oklch(92% 0 0);
+}
+
+/* Panel form (FormPanel) — Stisla tidak menangani kelas ini. */
+.dark .panel {
+  background: oklch(16% 0 0);
+}
+
+/* Bottom sheet (vue-bottom-sheet) — sesuaikan dengan tema aplikasi.
+   Komponen library di-teleport ke <body>, jadi selector harus menarget
+   class library langsung; `!important` agar menang atas CSS scoped library. */
+.bottom-sheet__content {
+  background: var(--color-surface) !important;
+  height: auto !important;
+}
+
+.bottom-sheet__draggable-thumb {
+  background: var(--color-foreground) !important;
+  opacity: 0.25 !important;
+}
+
+.bottom-sheet__main::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Skeleton placeholder */
+.dark .skeleton::after {
+  background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+}
+
+@layer components {
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-surface-2);
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
   }
+
+  .card {
+    --card-shadow: none;
+  }
+
+  /* Input range digaya manual. Tanpa ini Chrome merender track pakai warna sistem —
+     jadi hitam kalau OS-nya gelap, dan tidak terpengaruh token kita sama sekali.
+     Isi track digerakkan lewat --range-fill yang di-set dari template. */
+  .range {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: --spacing(5);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .range:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .range::-webkit-slider-runnable-track {
+    height: --spacing(2);
+    border-radius: 9999px;
+    background: linear-gradient(
+      to right,
+      var(--color-primary) var(--range-fill, 0%),
+      var(--color-gray-200) var(--range-fill, 0%)
+    );
+  }
+
+  .range::-moz-range-track {
+    height: --spacing(2);
+    border-radius: 9999px;
+    background: var(--color-gray-200);
+  }
+
+  .range::-moz-range-progress {
+    height: --spacing(2);
+    border-radius: 9999px;
+    background: var(--color-primary);
+  }
+
+  .range::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: --spacing(5);
+    height: --spacing(5);
+    margin-top: calc((--spacing(2) - --spacing(5)) / 2);
+    border-radius: 9999px;
+    border: 2px solid var(--color-surface);
+    background: var(--color-primary);
+    box-shadow: 0 1px 3px oklch(0% 0 0 / 0.25);
+  }
+
+  .range::-moz-range-thumb {
+    width: --spacing(5);
+    height: --spacing(5);
+    border-radius: 9999px;
+    border: 2px solid var(--color-surface);
+    background: var(--color-primary);
+    box-shadow: 0 1px 3px oklch(0% 0 0 / 0.25);
+  }
+
+  .dark .range::-webkit-slider-runnable-track {
+    background: linear-gradient(
+      to right,
+      var(--color-primary) var(--range-fill, 0%),
+      var(--color-gray-700) var(--range-fill, 0%)
+    );
+  }
+
+  .dark .range::-moz-range-track {
+    background: var(--color-gray-700);
+  }
+
+
+  /* Sisa track progress bar. Bawaan Stisla memakai --color-neutral yang jadi nyaris
+     hitam di tema gelap; dikunci ke abu-abu netral supaya kontras di dua tema. */
+  .progress {
+    --progress-bg: var(--color-gray-200);
+  }
+
+  .dark .progress {
+    --progress-bg: var(--color-gray-700);
+  }
+
+  .panel {
+    background: var(--color-gray-50);
+    --card-border-width: 0;
+    padding: 1rem;
+  }
+
+  .panel__title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-foreground);
+    margin-bottom: 0.75rem;
+  }
+
+  .panel__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    background: var(--color-primary-50);
+    color: var(--color-primary-emphasis);
+    flex-shrink: 0;
+  }
+
+  .tabs__list {
+    --tabs-list-radius: 9999px;
+    border-radius: 9999px;
+  }
+
+  /* Baris chip yang bisa digeser horizontal, scrollbar disembunyikan
+     supaya terasa seperti scroll native di mobile. */
+  .tab-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .tab-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-muted-foreground);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .chip--active {
+    color: var(--color-primary-foreground);
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .tabs__trigger[data-state="active"] {
+    --tabs-trigger-bg-active: var(--color-primary);
+    --tabs-trigger-color-active: var(--color-primary-foreground);
+    --tabs-trigger-border-color-active: var(--color-primary);
+  }
+
+  .pattern-primary {
+    background-color: #2fa6a0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 304 304' width='304' height='304'%3E%3Cpath fill='%23ffffff' fill-opacity='0.11' d='M44.1 224a5 5 0 1 1 0 2H0v-2h44.1zm160 48a5 5 0 1 1 0 2H82v-2h122.1zm57.8-46a5 5 0 1 1 0-2H304v2h-42.1zm0 16a5 5 0 1 1 0-2H304v2h-42.1zm6.2-114a5 5 0 1 1 0 2h-86.2a5 5 0 1 1 0-2h86.2zm-256-48a5 5 0 1 1 0 2H0v-2h12.1zm185.8 34a5 5 0 1 1 0-2h86.2a5 5 0 1 1 0 2h-86.2zM258 12.1a5 5 0 1 1-2 0V0h2v12.1zm-64 208a5 5 0 1 1-2 0v-54.2a5 5 0 1 1 2 0v54.2zm48-198.2V80h62v2h-64V21.9a5 5 0 1 1 2 0zm16 16V64h46v2h-48V37.9a5 5 0 1 1 2 0zm-128 96V208h16v12.1a5 5 0 1 1-2 0V210h-16v-76.1a5 5 0 1 1 2 0zm-5.9-21.9a5 5 0 1 1 0 2H114v48H85.9a5 5 0 1 1 0-2H112v-48h12.1zm-6.2 130a5 5 0 1 1 0-2H176v-74.1a5 5 0 1 1 2 0V242h-60.1zm-16-64a5 5 0 1 1 0-2H114v48h10.1a5 5 0 1 1 0 2H112v-48h-10.1zM66 284.1a5 5 0 1 1-2 0V274H50v30h-2v-32h18v12.1zM236.1 176a5 5 0 1 1 0 2H226v94h48v32h-2v-30h-48v-98h12.1zm25.8-30a5 5 0 1 1 0-2H274v44.1a5 5 0 1 1-2 0V146h-10.1zm-64 96a5 5 0 1 1 0-2H208v-80h16v-14h-42.1a5 5 0 1 1 0-2H226v18h-16v80h-12.1zm86.2-210a5 5 0 1 1 0 2H272V0h2v32h10.1zM98 101.9V146H53.9a5 5 0 1 1 0-2H96v-42.1a5 5 0 1 1 2 0zM53.9 34a5 5 0 1 1 0-2H80V0h2v34H53.9zm60.1 3.9V66H82v64H69.9a5 5 0 1 1 0-2H80V64h32V37.9a5 5 0 1 1 2 0zM101.9 82a5 5 0 1 1 0-2H128V37.9a5 5 0 1 1 2 0V82h-28.1zm16-64a5 5 0 1 1 0-2H146v44.1a5 5 0 1 1-2 0V18h-26.1zm102.2 270a5 5 0 1 1 0 2H98v14h-2v-16h124.1zM242 149.9V160h16v34h-16v62h48v48h-2v-46h-48v-66h16v-30h-16v-12.1a5 5 0 1 1 2 0zM53.9 18a5 5 0 1 1 0-2H64V2H48V0h18v18H53.9zm112 32a5 5 0 1 1 0-2H192V0h50v2h-48v48h-28.1zm-48-48a5 5 0 0 1-9.8-2h2.07a3 3 0 1 0 5.66 0H178v34h-18V21.9a5 5 0 1 1 2 0V32h14V2h-58.1zm0 96a5 5 0 1 1 0-2H137l32-32h39V21.9a5 5 0 1 1 2 0V66h-40.17l-32 32H117.9zm28.1 90.1a5 5 0 1 1-2 0v-76.51L175.59 80H224V21.9a5 5 0 1 1 2 0V82h-49.59L146 112.41v75.69zm16 32a5 5 0 1 1-2 0v-99.51L184.59 96H300.1a5 5 0 0 1 3.9-3.9v2.07a3 3 0 0 0 0 5.66v2.07a5 5 0 0 1-3.9-3.9H185.41L162 121.41v72.59zm-18-50a5 5 0 1 1-2 0V146H76v-76.1a5 5 0 1 1 2 0V144h62.1zm4-98a5 5 0 1 1 0-2H176V0h2v66h-46.1zm4 160a5 5 0 1 1 0-2H176v48h-12.1a5 5 0 1 1 0 2H174v-48h-28.1zm72-82a5 5 0 1 1 0-2H226v48h-12.1a5 5 0 1 1 0 2H228v-48h8.1zM242 18a5 5 0 1 1 0-2H274V0h2v18h-34.1z'/%3E%3C/svg%3E");
+  }
+}
+
+.bottom-bar-notch {
+  -webkit-mask-image: radial-gradient(circle 38px at 50% 0px, transparent 0 38px, black 38.5px);
+  mask-image: radial-gradient(circle 38px at 50% 0px, transparent 0 38px, black 38.5px);
+}
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
+  background: var(--color-surface-2);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+.dark body {
+  background: oklch(9% 0 0);
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
-
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
   }
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
-
-#app {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
-}
-
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
-  width: 100%;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
-
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+@theme {
+  --font-sans: "Montserrat", system-ui, sans-serif;
+  --color-primary: #2fa6a0;
+  --color-primary-emphasis: #007873;
+  --color-primary-50: #eaf8f6;
+  --color-primary-100: #d3f0ed;
+  --color-primary-200: #b1e5e0;
+  --color-primary-300: #89d5cf;
+  --color-primary-400: #5bbfb8;
+  --color-primary-500: #2fa6a0;
+  --color-primary-600: #018f89;
+  --color-primary-700: #007873;
+  --color-primary-800: #00625e;
+  --color-primary-900: #01504c;
+  --color-primary-950: #002b29;
+  --color-primary-foreground: oklch(1 0 0);
+  --color-foreground: oklch(27% 0 0);
+  --color-muted-foreground: oklch(52% 0 0);
+  --color-surface: oklch(100% 0 0);
+  --color-surface-2: oklch(98% 0 0);
+  --color-border: oklch(95% 0 0);
+  --color-border-strong: oklch(93% 0 0);
+  --color-warning: oklch(76.97% 0.1645 70.61);
+  --color-warning-emphasis: oklch(54.3% 0.1645 70.61);
+  --color-warning-foreground: oklch(27% 0 0);
+  --color-danger: oklch(59.4% 0.2229 26.82);
+  --color-danger-emphasis: oklch(52.9% 0.2229 26.82);
+  --color-danger-foreground: oklch(100% 0 0);
+  --radius-md: 0.5rem;
 }
