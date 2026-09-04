@@ -17,6 +17,7 @@ const kelas = computed(
       dikerjakan: "badge--primary",
       menunggu: "badge--warning",
       revisi: "badge--danger",
+      tambahanWaktu: "badge--danger",
       selesai: "badge--success",
     })[props.status],
 )

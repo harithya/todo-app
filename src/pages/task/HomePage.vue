@@ -55,12 +55,13 @@ const hitung = (status) => tasks.filter((t) => t.status === status).length
 const filter = [
   { key: "semua", label: "Semua" },
   { key: "dikerjakan", label: "Dikerjakan" },
-  { key: "menunggu", label: "Menunggu" },
+  { key: "menunggu", label: "Perlu Diperiksa" },
   { key: "revisi", label: "Revisi" },
-  { key: "selesai", label: "Selesai" },
+  { key: "tambahanWaktu", label: "Tambahan Waktu" },
+  { key: "selesai", label: "Sudah Diperiksa" },
 ]
 
-const perluPerhatian = (t) => (t.pk || t.status === "revisi") && t.status !== "selesai"
+const perluPerhatian = (t) => (t.pk || t.status === "revisi" || t.status === "tambahanWaktu") && t.status !== "selesai"
 
 const statistik = computed(() => [
   { label: "Dikerjakan", value: hitung("baru") + hitung("dikerjakan") },

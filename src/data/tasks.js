@@ -1021,9 +1021,10 @@ export const tasks = [
 export const statusLabel = {
   baru: "Baru",
   dikerjakan: "Dikerjakan",
-  menunggu: "Menunggu review",
+  menunggu: "Perlu Diperiksa",
   revisi: "Revisi",
-  selesai: "Selesai",
+  tambahanWaktu: "Tambahan Waktu",
+  selesai: "Sudah Diperiksa",
 }
 
 // Status yang mengunci progres dan lampiran dari assignee.
