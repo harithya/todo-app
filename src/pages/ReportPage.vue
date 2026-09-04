@@ -1,33 +1,35 @@
 <template>
   <AppPageLayout title="Laporan">
     <div class="flex flex-col gap-5">
-      <!-- Filter di satu baris di atas semua chart, bukan tersebar per chart. -->
-      <section class="card">
-        <div class="card__body p-3.5 gap-3">
-          <VueDatePicker
-            v-model="rentang"
-            range
-            :enable-time-picker="false"
-            :clearable="false"
-            locale="id-ID"
-            format="dd MMM yyyy"
-            placeholder="Pilih rentang tanggal"
-            select-text="Terapkan"
-            cancel-text="Batal"
-            now-button-label="Hari ini"
-            :day-names="['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']"
-            auto-apply
-          />
+      <!-- Filter di atas semua chart, bukan tersebar per chart. Tanpa bungkus
+           card: picker-nya sudah punya bidang input sendiri, jadi kartu di
+           sekelilingnya cuma menambah satu lapis border tanpa guna.
 
-          <button
-            v-if="bukanDefault"
-            type="button"
-            class="self-end text-xs font-medium text-primary-emphasis active:opacity-70"
-            @click="resetRentang"
-          >
-            Kembali ke 30 hari
-          </button>
-        </div>
+           v14 mengelompokkan sebagian besar opsi ke objek konfigurasi. Nama prop
+           gaya v13 (`format`, `enable-time-picker`, `clearable`, `select-text`)
+           diterima tanpa protes lalu diabaikan diam-diam, jadi setiap opsi di
+           bawah memakai bentuk v14. -->
+      <section class="flex flex-col gap-2">
+        <VueDatePicker
+          v-model="rentang"
+          :range="{ partialRange: false }"
+          :locale="id"
+          :formats="{ input: formatRentang }"
+          :time-config="{ enableTimePicker: false }"
+          :input-attrs="{ clearable: false }"
+          :action-row="{ selectBtnLabel: 'Terapkan', cancelBtnLabel: 'Batal', nowBtnLabel: 'Hari ini' }"
+          placeholder="Pilih rentang tanggal"
+          auto-apply
+        />
+
+        <button
+          v-if="bukanDefault"
+          type="button"
+          class="self-end text-xs font-medium text-primary-emphasis active:opacity-70"
+          @click="resetRentang"
+        >
+          Kembali ke 30 hari
+        </button>
       </section>
 
       <section class="grid grid-cols-2 gap-3">
@@ -105,8 +107,12 @@
 <script setup>
 import { computed, ref } from "vue"
 import { PhArrowDown, PhArrowUp } from "@phosphor-icons/vue"
-// v14 memakai named export, bukan default.
+// v14 memakai named export, bukan default. Prop `locale` menerima objek Locale
+// date-fns — bukan string seperti "id-ID"; string membuat format() melempar
+// "Cannot read properties of undefined (reading 'preprocessor')".
 import { VueDatePicker } from "@vuepic/vue-datepicker"
+import { format as formatTanggal } from "date-fns"
+import { id } from "date-fns/locale"
 import AppPageLayout from "../layouts/AppPageLayout.vue"
 import ProgressLine from "../components/report/ProgressLine.vue"
 import StatusDonut from "../components/report/StatusDonut.vue"
@@ -124,6 +130,16 @@ const awalan = rentangDefault(30)
 const bawaan = [awalan.dari, awalan.sampai]
 
 const rentang = ref([...bawaan])
+
+// v14 mengganti prop `format` tunggal dengan objek `formats`; `formats.input`
+// boleh berupa fungsi yang menerima seluruh array rentang, jadi separatornya
+// bisa ditentukan sendiri alih-alih memakai bawaan komponen.
+function formatRentang(tanggal) {
+  const daftar = (Array.isArray(tanggal) ? tanggal : [tanggal]).filter(Boolean)
+  if (!daftar.length) return ""
+  const tulis = (d) => formatTanggal(d, "d MMMM yyyy", { locale: id })
+  return daftar.length === 1 ? tulis(daftar[0]) : `${tulis(daftar[0])} - ${tulis(daftar[1])}`
+}
 const urut = ref("durasi")
 
 const daftar = computed(() => {

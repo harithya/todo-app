@@ -71,7 +71,9 @@ export function rentangDefault(hari = 30) {
   const acuan = waktu.length ? new Date(Math.max(...waktu)) : new Date()
   const mulai = new Date(acuan)
   mulai.setDate(mulai.getDate() - (hari - 1))
-  return { dari: awalHari(mulai), sampai: akhirHari(acuan) }
+  // Keduanya dibulatkan ke tengah malam: nilai ini mengisi v-model date picker,
+  // dan `taskRentang()` yang memuaikan ujung atasnya ke akhir hari saat memfilter.
+  return { dari: awalHari(mulai), sampai: awalHari(acuan) }
 }
 
 export function awalHari(d) {
