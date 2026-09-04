@@ -23,29 +23,25 @@
         </button>
       </section>
 
-      <section class="card">
-        <div class="card__body p-0 divide-y divide-black/10 dark:divide-white/15">
-          <div v-for="s in statistikTask" :key="s.label" class="flex items-center justify-between px-4 py-3">
-            <span class="text-sm text-muted-foreground">{{ s.label }}</span>
-            <span class="text-sm font-semibold text-foreground tabular-nums">{{ s.value }}</span>
-          </div>
+      <section>
+        <div class="flex gap-2 overflow-x-auto tab-scroll pb-2">
+          <button
+            v-for="tab in tabStatistik"
+            :key="tab.key"
+            type="button"
+            class="chip shrink-0"
+            :class="{ 'chip--active': tabAktif === tab.key }"
+            @click="tabAktif = tab.key"
+          >
+            {{ tab.label }}
+          </button>
         </div>
-      </section>
-
-      <section class="card">
-        <div class="card__body p-0 divide-y divide-black/10 dark:divide-white/15">
-          <div v-for="s in statistik" :key="s.label" class="flex items-center justify-between px-4 py-3">
-            <span class="text-sm text-muted-foreground">{{ s.label }}</span>
-            <span class="text-sm font-semibold text-foreground tabular-nums">{{ s.value }}</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="card__body p-0 divide-y divide-black/10 dark:divide-white/15">
-          <div v-for="s in statistikDurasi" :key="s.label" class="flex items-center justify-between px-4 py-3">
-            <span class="text-sm text-muted-foreground">{{ s.label }}</span>
-            <span class="text-sm font-semibold text-foreground tabular-nums">{{ s.value }}</span>
+        <div class="card mt-3">
+          <div class="card__body p-0 divide-y divide-black/10 dark:divide-white/15">
+            <div v-for="s in dataTab" :key="s.label" class="flex items-center justify-between px-4 py-3">
+              <span class="text-sm text-muted-foreground">{{ s.label }}</span>
+              <span class="text-sm font-semibold text-foreground tabular-nums">{{ s.value }}</span>
+            </div>
           </div>
         </div>
       </section>
@@ -163,6 +159,20 @@ const deret = computed(() => kumulatifSelesai(daftar.value))
 const baris = computed(() => rincian(daftar.value, urut.value))
 
 const hitung = (status) => tasks.filter((t) => t.status === status).length
+
+const tabStatistik = [
+  { key: "task", label: "Status Task" },
+  { key: "ringkasan", label: "Ringkasan" },
+  { key: "durasi", label: "Durasi" },
+]
+
+const tabAktif = ref("task")
+
+const dataTab = computed(() => {
+  if (tabAktif.value === "task") return statistikTask.value
+  if (tabAktif.value === "ringkasan") return statistik.value
+  return statistikDurasi.value
+})
 
 const statistikTask = computed(() => [
   { label: "Dikerjakan", value: hitung("baru") + hitung("dikerjakan") },
