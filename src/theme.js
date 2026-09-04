@@ -19,6 +19,8 @@ export const mode = ref(bacaMode())
 function terapkan() {
   const gelap = mode.value === "dark" || (mode.value === "system" && media.matches)
   document.documentElement.classList.toggle("dark", gelap)
+  const meta = document.querySelector('meta[name="theme-color"]')
+  if (meta) meta.setAttribute("content", gelap ? "#1a1a1a" : "#2fa6a0")
 }
 
 watch(mode, (nilai) => {

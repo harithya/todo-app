@@ -14,7 +14,6 @@
     />
     <title>Todo</title>
     <script>
-      // Terapkan tema gelap sedini mungkin agar tidak ada flash putih.
       (function () {
         try {
           var saved = localStorage.getItem("todo_theme");
@@ -22,6 +21,8 @@
             saved === "dark" ||
             (saved !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
           if (dark) document.documentElement.classList.add("dark");
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", dark ? "#1a1a1a" : "#2fa6a0");
         } catch (e) {}
       })();
     </script>
