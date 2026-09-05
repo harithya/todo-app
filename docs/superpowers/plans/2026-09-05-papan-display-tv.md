@@ -180,10 +180,18 @@ function nilaiTanggal(s) {
 }
 
 // Yang mendesak selalu di atas layar, yang selesai tenggelam ke bawah.
+//
+// PK dan prioritas hanya mengangkat task yang BELUM diperiksa. Task PK yang
+// sudah selesai bukan lagi perhatian khusus, dan mendudukkannya di baris
+// teratas papan berarti ruang paling terlihat dipakai oleh pekerjaan yang
+// sudah beres. Aturan yang sama sudah dipakai `perluPerhatian` di HomePage.
 function peringkat(t) {
-  if (t.pk) return 0
-  if (t.prioritas) return 1
-  return { pd: 2, belum: 3, rev: 4, tw: 5, sd: 6 }[statusPapan(t)] ?? 7
+  const s = statusPapan(t)
+  if (s !== "sd") {
+    if (t.pk) return 0
+    if (t.prioritas) return 1
+  }
+  return { pd: 2, belum: 3, rev: 4, tw: 5, sd: 6 }[s] ?? 7
 }
 
 export function urutkan(list) {
@@ -238,10 +246,16 @@ export function ember(t) {
 
 - [ ] **Step 5: Verifikasi lapisan data**
 
+`src/data/display.js` mengimpor `"./tasks"` tanpa ekstensi mengikuti konvensi
+repo. Vite meresolusinya, Node polos tidak — jadi cek dijalankan atas salinan
+yang specifier-nya ditulis lengkap, bukan dengan mengubah konvensi impor.
+
 Run:
 ```bash
+S=$(mktemp -d)
+sed 's|from "./tasks"|from "'"$PWD"'/src/data/tasks.js"|' src/data/display.js > "$S/display.mjs"
 node --input-type=module -e '
-import { bangunPapan, ringkasan, statusPapan, ember, EMBER } from "./src/data/display.js"
+import { bangunPapan, ringkasan, statusPapan, ember, EMBER } from "'"$S"'/display.mjs"
 import { tasks } from "./src/data/tasks.js"
 
 const papan = bangunPapan()
@@ -262,7 +276,7 @@ const admin = papan[0].rutin.map(t => `${t.pk?"PK":t.prioritas?"PR":"  "} ${stat
 console.log("urutan Admin/rutin:"); console.log(admin.join("\n"))
 '
 ```
-Expected: `total cocok: true`, `jumlah per status cocok: true`, `semua task masuk papan: true`, `semua ember dikenal: true`, dan daftar urutan Admin/rutin diawali baris `PK` atau `PR`, diakhiri baris `sd`.
+Expected: `total cocok: true`, `jumlah per status cocok: true`, `semua task masuk papan: true`, `semua ember dikenal: true`, dan daftar urutan Admin/rutin diawali `PK belum` lalu `PR belum`, diakhiri baris `sd`. Kalau baris teratas berbunyi `PK sd`, aturan `peringkat` salah: task PK yang sudah selesai tidak boleh menempati ruang paling terlihat.
 
 - [ ] **Step 6: Build**
 
