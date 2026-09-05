@@ -24,8 +24,23 @@ Folder yang dipakai begitu aplikasi tumbuh, ikuti nama ini:
 
 ## Domain
 
-Papan tugas Ostic. Task diberikan orang lain ke pengguna aplikasi ini; pengguna hanya
-berperan sebagai **assignee** — tidak ada layar pemberi tugas maupun pengecek di sini.
+Papan tugas Ostic. Pengguna bisa berperan sebagai **assignee** (task diberikan orang
+lain ke dia) maupun **pemberi tugas** (dia membuat task untuk orang lain lewat halaman
+Create Task). Layar pengecek tidak ada di sini.
+
+- Tiap task punya `pemberi` (yang membuat/memberi task) dan `assignee` (yang mengerjakan).
+  Pengguna aktif ada di `currentUser` (`src/stores/auth.js`).
+- HomePage punya dua dimensi filter yang bisa dikombinasikan: **scope** (segmented control:
+  Untuk Saya / Dari Saya / Semua) dan **status** (baris chip). Jangan gabungkan keduanya
+  jadi satu baris. Default scope `saya`, default status `berjalan`.
+- Chip status pertama bernama **"Berjalan"** (`progres < 100`), bukan "Semua" — dulu
+  namanya "Semua" padahal menyembunyikan task selesai.
+- Tiap chip status menampilkan jumlah task. Angkanya dihitung dari himpunan `dasar`
+  (scope + pencarian, tanpa filter status). Chip berjumlah 0 di-*dim* dengan `opacity-45`,
+  jangan disembunyikan — menyembunyikan bikin posisi chip lain bergeser saat ganti scope.
+- `TaskListItem` menampilkan **lawan bicara** di baris meta, bukan diri sendiri: prop
+  `peran="assignee"` menampilkan `pemberi`, `peran="pembuat"` menampilkan `assignee`.
+- Halaman Laporan memakai seluruh data, tidak ikut scope.
 
 - Task punya `divisi` (Admin / Reservasi / Creative) dan `jenis` (`rutin` / `insidentil`).
 - `pk` = penanda Perhatian Khusus, tampil sebagai badge merah. Task PK dan task
@@ -106,6 +121,10 @@ Verifikasi wajib setelah mengubah kode: `npm run build` harus sukses.
 - Setiap token baru yang mau dipakai sebagai utility harus ada di blok `@theme`. Kalau `border-border` atau sejenisnya tidak muncul, penyebabnya token itu belum dideklarasikan di sana.
 - Latar biru bermotif pakai class `.pattern-primary`.
 - Tombol utama: `.button .button--primary`. Efek tekan: `active:scale-95` / `active:scale-[0.99]`.
+- Dua baris filter di HomePage dibedakan lewat bentuk wadahnya. `SegmentedControl` (scope)
+  memakai track `rounded-full` abu dengan pill putih terangkat yang **meluncur** antar segmen
+  (satu elemen absolut + `translateX`, jangan animasikan `left`/`width`). Baris chip status
+  tidak punya wadah dan chip aktifnya tetap primary solid + teks putih.
 - Scrollbar TIDAK disembunyikan global. Area yang bisa digeser horizontal (baris tab)
   pakai class `.tab-scroll` — scrollbar tetap tampil tapi ditipiskan jadi 4px.
 - Dark mode di-toggle lewat class `.dark` di `<html>` (variant didefinisikan di `src/style.css`). Nilai awalnya diset oleh script inline di `index.html` dari `localStorage.todo_theme`.
