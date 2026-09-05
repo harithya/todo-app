@@ -10,6 +10,7 @@ import ProfilePage from "../pages/ProfilePage.vue"
 import EditProfilePage from "../pages/profile/EditProfilePage.vue"
 import PasswordPage from "../pages/profile/PasswordPage.vue"
 import AppearancePage from "../pages/profile/AppearancePage.vue"
+import DisplayPage from "../pages/display/DisplayPage.vue"
 import { isAuthenticated } from "../stores/auth"
 
 const routes = [
@@ -44,6 +45,15 @@ const routes = [
     component: AppearancePage,
     meta: { hideBottomNav: true },
   },
+  {
+    path: "/display",
+    name: "display",
+    component: DisplayPage,
+    // `layar`: halaman mengisi layar penuh, lewati shell max-w-lg di App.vue.
+    // `publik`: TV tidak punya keyboard dan sesi di localStorage bisa hilang
+    // kapan saja; tanpa ini papan berhenti di halaman login.
+    meta: { layar: true, publik: true, hideBottomNav: true },
+  },
 ]
 
 const AUTH_PAGES = ["login"]
@@ -55,6 +65,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
+  if (to.meta.publik) return
   if (to.name !== "login" && !isAuthenticated.value) {
     return { name: "login" }
   }
