@@ -2,9 +2,9 @@
   <div class="min-h-svh flex flex-col bg-surface-2">
     <div class="pattern-primary pt-16 pb-20 text-center">
       <img
-        src="https://wpmedia.tealium.com/wp-content/uploads/2025/02/Tealium_Logo-Teal.png"
+        src="/logo.png"
         alt="Logo"
-        class="h-14 mx-auto brightness-0 invert"
+        class="h-20 mx-auto brightness-0 invert"
       />
     </div>
 
