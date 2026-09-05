@@ -17,6 +17,8 @@
       <BoardTable judul="Tugas Rutin" jenis="rutin" :daftar="d.rutin" />
       <BoardTable judul="Tugas Insidentil" jenis="insidentil" :daftar="d.insidentil" />
     </div>
+
+    <OwnerSummary v-show="indeks === papan.length" :papan="papan" :angka="angka" />
   </div>
 </template>
 
@@ -25,10 +27,12 @@ import { computed, nextTick, watch } from "vue"
 import DisplayHeader from "../../components/display/DisplayHeader.vue"
 import DisplayTabs from "../../components/display/DisplayTabs.vue"
 import BoardTable from "../../components/display/BoardTable.vue"
+import OwnerSummary from "../../components/display/OwnerSummary.vue"
 import { useAutoScroll, useRotasi } from "../../composables/useRotasi"
-import { bangunPapan } from "../../data/display"
+import { bangunPapan, ringkasan } from "../../data/display"
 
 const papan = bangunPapan()
+const angka = ringkasan()
 
 const tabs = computed(() => [
   ...papan.map((d) => ({ key: d.nama, label: d.nama, sub: "Dasbor Divisi", pk: d.pk })),
