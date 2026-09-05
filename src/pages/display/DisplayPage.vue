@@ -19,6 +19,23 @@
     </div>
 
     <OwnerSummary v-show="indeks === papan.length" :papan="papan" :angka="angka" />
+
+    <footer class="shrink-0 flex items-center gap-3 bg-surface rounded-xl border border-border px-3 py-[clamp(0.2rem,0.5vh,0.6rem)] overflow-hidden">
+      <span class="shrink-0 bg-primary text-primary-foreground font-semibold uppercase tracking-wider rounded px-2 py-0.5 text-[clamp(0.48rem,0.6vw,0.8rem)]">
+        Info
+      </span>
+      <div class="flex-1 min-w-0 overflow-hidden">
+        <!-- Isi diulang dua kali dan animasinya berhenti di -50%: satu salinan
+             akan menyisakan celah kosong tiap putaran. -->
+        <span class="berjalan text-muted-foreground text-[clamp(0.55rem,0.7vw,0.95rem)]">
+          <template v-for="n in 2" :key="n">
+            Catatan progres diperbarui tiap ada perubahan pekerjaan &nbsp;&bull;&nbsp;
+            Baris merah bertanda PK butuh perhatian khusus segera &nbsp;&bull;&nbsp;
+            Papan menampilkan data contoh &nbsp;&bull;&nbsp;
+          </template>
+        </span>
+      </div>
+    </footer>
   </div>
 </template>
 

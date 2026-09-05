@@ -61,6 +61,37 @@ Create Task). Layar pengecek tidak ada di sini.
   `riwayat` = kejadian pada task (diassign, dikirim, disetujui, diminta revisi), tampil
   sebagai timeline polos tanpa deskripsi atau gambar.
 
+## Papan Display TV (`/display`)
+
+Permukaan terpisah dari aplikasi mobile. Spec:
+`docs/superpowers/specs/2026-09-05-papan-display-tv-design.md`.
+
+- Route punya `meta: { layar: true, publik: true }`. `layar` membuat `App.vue`
+  merender `RouterView` telanjang tanpa shell `max-w-lg` dan tanpa BottomNav;
+  `publik` melewati guard login karena TV tidak punya keyboard. `publik` adalah
+  kenyamanan, bukan keamanan — papan menampilkan seluruh task semua divisi ke
+  siapa pun yang bisa membuka URL-nya.
+- Papan tidak punya dataset sendiri. `src/data/display.js` memetakan
+  `src/data/tasks.js` ke bentuk papan. Jangan bikin dataset signage terpisah.
+- Enam status aplikasi dipetakan ke lima status papan: `baru` dan `dikerjakan`
+  sama-sama jadi "Belum Selesai".
+- `finish` dan `hadRevisi` diturunkan dari `riwayat`, tidak disimpan sebagai field.
+- PK dan `prioritas` hanya mengangkat task yang BELUM diperiksa. Task PK yang
+  sudah selesai tidak boleh menempati baris teratas — aturan yang sama dipakai
+  `perluPerhatian` di HomePage.
+- Papan **selalu tema terang**. Jangan tambahkan variant `dark:` di
+  `src/components/display/` maupun `src/pages/display/`.
+- Ukuran teks pakai `clamp()` berbasis viewport, bukan px tetap: papan dibaca
+  dari 3-5 meter dan harus terbaca di 1080p maupun 4K.
+- Semua timer (jam, rotasi, auto-scroll) hidup di `src/composables/useJam.js`
+  dan `src/composables/useRotasi.js`, dan wajib dibersihkan di `onUnmounted`.
+- Panel divisi dipilih dengan `v-show`, bukan `v-if`: `v-if` membongkar panel
+  tiap rotasi dan posisi auto-scroll-nya hilang tiap 9 detik. Konsekuensinya
+  auto-scroll harus melewati elemen ber-`clientHeight` 0, kalau tidak panel
+  tersembunyi ikut digeser.
+- Animasi hanya `transform`. Jangan animasikan `left`/`width`; papan menyala
+  24 jam.
+
 ## Perintah yang Sering Dipakai
 
 ```bash
