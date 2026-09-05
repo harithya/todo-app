@@ -42,6 +42,10 @@ export function useAutoScroll(selector, jeda = 5000) {
 
   function geser() {
     document.querySelectorAll(selector).forEach((el) => {
+      // Panel yang disembunyikan `v-show` punya clientHeight 0. Tanpa penjagaan
+      // ini panel tersembunyi ikut digeser, lalu muncul di tengah-tengah saat
+      // gilirannya tiba.
+      if (!el.clientHeight) return
       const maks = el.scrollHeight - el.clientHeight
       if (maks <= 2) return
       const langkah = Math.max(70, Math.min(el.clientHeight * 0.6, 260))
