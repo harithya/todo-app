@@ -1,5 +1,12 @@
 <template>
-  <section class="flex-1 min-h-0 flex flex-col bg-surface rounded-xl border border-border overflow-hidden">
+  <!-- `auto`: tinggi ikut isi, bukan ikut sisa layar. Dibatasi 45% supaya
+       daftar insidentil yang panjang tidak mendorong panel rutin keluar layar
+       — induknya `overflow-hidden`, jadi yang terdorong hilang, bukan bisa
+       di-scroll. -->
+  <section
+    class="min-h-0 flex flex-col bg-surface rounded-xl border border-border overflow-hidden"
+    :class="auto ? 'flex-none max-h-[45%]' : 'flex-1'"
+  >
     <div class="shrink-0 flex items-center justify-between px-[clamp(0.75rem,1.2vw,1.75rem)] py-[clamp(0.35rem,0.7vh,0.85rem)] border-b-2 border-border">
       <h2 class="flex items-center gap-2 font-semibold uppercase tracking-wider text-primary-emphasis text-[clamp(0.72rem,0.95vw,1.35rem)]">
         <span
@@ -110,6 +117,7 @@ defineProps({
   judul: { type: String, required: true },
   jenis: { type: String, required: true },
   daftar: { type: Array, required: true },
+  auto: { type: Boolean, default: false },
 })
 
 const KOLOM = [

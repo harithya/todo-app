@@ -1,5 +1,5 @@
 <template>
-  <header class="sapuan relative overflow-hidden shrink-0 pattern-primary rounded-xl px-[clamp(1rem,1.6vw,2rem)] py-[clamp(0.5rem,0.9vh,1rem)] flex items-center justify-between">
+  <header :class="{ sapuan: gerak }" class="relative overflow-hidden shrink-0 pattern-primary rounded-xl px-[clamp(1rem,1.6vw,2rem)] py-[clamp(0.5rem,0.9vh,1rem)] flex items-center justify-between">
     <div class="relative z-1 flex items-center gap-[clamp(0.75rem,1.1vw,1.5rem)]">
       <div class="bg-surface rounded-lg p-1.5 shrink-0 size-[clamp(2.4rem,3.2vw,4rem)] flex items-center justify-center">
         <img src="/logo.png" alt="Ostic" class="w-full h-full object-contain" />
@@ -25,6 +25,10 @@
 
 <script setup>
 import { useJam } from "../../composables/useJam"
+
+defineProps({
+  gerak: { type: Boolean, default: true },
+})
 
 const { tanggal, jam } = useJam()
 </script>

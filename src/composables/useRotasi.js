@@ -3,12 +3,13 @@ import { onMounted, onUnmounted, ref } from "vue"
 // Rotasi tab papan. `jumlah` adalah banyaknya tab yang IKUT berputar, bukan
 // total tab: tab Owner sengaja di luar rotasi karena isinya dibaca, bukan
 // dilewati.
-export function useRotasi({ jumlah, jeda = 9000 }) {
+export function useRotasi({ jumlah, jeda = 9000, aktif = true }) {
   const indeks = ref(0)
   let timer = null
 
   function mulai() {
     clearInterval(timer)
+    if (!aktif) return
     timer = setInterval(() => {
       indeks.value = (indeks.value + 1) % jumlah
     }, jeda)
@@ -37,7 +38,7 @@ export function useRotasi({ jumlah, jeda = 9000 }) {
 // Menggeser tiap panel yang lebih tinggi dari kotaknya, lalu kembali ke atas
 // di ujung. Panel yang muat penuh dilewati: gerakan tanpa isi baru cuma
 // membuat papan terlihat gelisah.
-export function useAutoScroll(selector, jeda = 5000) {
+export function useAutoScroll(selector, jeda = 5000, aktif = true) {
   let timer = null
 
   function geser() {
@@ -54,6 +55,6 @@ export function useAutoScroll(selector, jeda = 5000) {
     })
   }
 
-  onMounted(() => { timer = setInterval(geser, jeda) })
+  onMounted(() => { if (aktif) timer = setInterval(geser, jeda) })
   onUnmounted(() => clearInterval(timer))
 }
