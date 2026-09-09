@@ -24,8 +24,23 @@ Folder yang dipakai begitu aplikasi tumbuh, ikuti nama ini:
 
 ## Domain
 
-Papan tugas Ostic. Task diberikan orang lain ke pengguna aplikasi ini; pengguna hanya
-berperan sebagai **assignee** — tidak ada layar pemberi tugas maupun pengecek di sini.
+Papan tugas Ostic. Pengguna bisa berperan sebagai **assignee** (task diberikan orang
+lain ke dia) maupun **pemberi tugas** (dia membuat task untuk orang lain lewat halaman
+Create Task). Layar pengecek tidak ada di sini.
+
+- Tiap task punya `pemberi` (yang membuat/memberi task) dan `assignee` (yang mengerjakan).
+  Pengguna aktif ada di `currentUser` (`src/stores/auth.js`).
+- HomePage punya dua dimensi filter yang bisa dikombinasikan: **scope** (segmented control:
+  Untuk Saya / Dari Saya / Semua) dan **status** (baris chip). Jangan gabungkan keduanya
+  jadi satu baris. Default scope `saya`, default status `berjalan`.
+- Chip status pertama bernama **"Berjalan"** (`progres < 100`), bukan "Semua" — dulu
+  namanya "Semua" padahal menyembunyikan task selesai.
+- Tiap chip status menampilkan jumlah task. Angkanya dihitung dari himpunan `dasar`
+  (scope + pencarian, tanpa filter status). Chip berjumlah 0 di-*dim* dengan `opacity-45`,
+  jangan disembunyikan — menyembunyikan bikin posisi chip lain bergeser saat ganti scope.
+- `TaskListItem` menampilkan **lawan bicara** di baris meta, bukan diri sendiri: prop
+  `peran="assignee"` menampilkan `pemberi`, `peran="pembuat"` menampilkan `assignee`.
+- Halaman Laporan memakai seluruh data, tidak ikut scope.
 
 - Task punya `divisi` (Admin / Reservasi / Creative) dan `jenis` (`rutin` / `insidentil`).
 - `pk` = penanda Perhatian Khusus, tampil sebagai badge merah. Task PK dan task
@@ -45,6 +60,37 @@ berperan sebagai **assignee** — tidak ada layar pemberi tugas maupun pengecek 
   kerja assignee, tampil di section "Update Progres" dan dibuka lewat bottom sheet.
   `riwayat` = kejadian pada task (diassign, dikirim, disetujui, diminta revisi), tampil
   sebagai timeline polos tanpa deskripsi atau gambar.
+
+## Papan Display TV (`/display`)
+
+Permukaan terpisah dari aplikasi mobile. Spec:
+`docs/superpowers/specs/2026-09-05-papan-display-tv-design.md`.
+
+- Route punya `meta: { layar: true, publik: true }`. `layar` membuat `App.vue`
+  merender `RouterView` telanjang tanpa shell `max-w-lg` dan tanpa BottomNav;
+  `publik` melewati guard login karena TV tidak punya keyboard. `publik` adalah
+  kenyamanan, bukan keamanan — papan menampilkan seluruh task semua divisi ke
+  siapa pun yang bisa membuka URL-nya.
+- Papan tidak punya dataset sendiri. `src/data/display.js` memetakan
+  `src/data/tasks.js` ke bentuk papan. Jangan bikin dataset signage terpisah.
+- Enam status aplikasi dipetakan ke lima status papan: `baru` dan `dikerjakan`
+  sama-sama jadi "Belum Selesai".
+- `finish` dan `hadRevisi` diturunkan dari `riwayat`, tidak disimpan sebagai field.
+- PK dan `prioritas` hanya mengangkat task yang BELUM diperiksa. Task PK yang
+  sudah selesai tidak boleh menempati baris teratas — aturan yang sama dipakai
+  `perluPerhatian` di HomePage.
+- Papan **selalu tema terang**. Jangan tambahkan variant `dark:` di
+  `src/components/display/` maupun `src/pages/display/`.
+- Ukuran teks pakai `clamp()` berbasis viewport, bukan px tetap: papan dibaca
+  dari 3-5 meter dan harus terbaca di 1080p maupun 4K.
+- Semua timer (jam, rotasi, auto-scroll) hidup di `src/composables/useJam.js`
+  dan `src/composables/useRotasi.js`, dan wajib dibersihkan di `onUnmounted`.
+- Panel divisi dipilih dengan `v-show`, bukan `v-if`: `v-if` membongkar panel
+  tiap rotasi dan posisi auto-scroll-nya hilang tiap 9 detik. Konsekuensinya
+  auto-scroll harus melewati elemen ber-`clientHeight` 0, kalau tidak panel
+  tersembunyi ikut digeser.
+- Animasi hanya `transform`. Jangan animasikan `left`/`width`; papan menyala
+  24 jam.
 
 ## Perintah yang Sering Dipakai
 
@@ -106,6 +152,10 @@ Verifikasi wajib setelah mengubah kode: `npm run build` harus sukses.
 - Setiap token baru yang mau dipakai sebagai utility harus ada di blok `@theme`. Kalau `border-border` atau sejenisnya tidak muncul, penyebabnya token itu belum dideklarasikan di sana.
 - Latar biru bermotif pakai class `.pattern-primary`.
 - Tombol utama: `.button .button--primary`. Efek tekan: `active:scale-95` / `active:scale-[0.99]`.
+- Dua baris filter di HomePage dibedakan lewat bentuk wadahnya. `SegmentedControl` (scope)
+  memakai track `rounded-full` abu dengan pill putih terangkat yang **meluncur** antar segmen
+  (satu elemen absolut + `translateX`, jangan animasikan `left`/`width`). Baris chip status
+  tidak punya wadah dan chip aktifnya tetap primary solid + teks putih.
 - Scrollbar TIDAK disembunyikan global. Area yang bisa digeser horizontal (baris tab)
   pakai class `.tab-scroll` — scrollbar tetap tampil tapi ditipiskan jadi 4px.
 - Dark mode di-toggle lewat class `.dark` di `<html>` (variant didefinisikan di `src/style.css`). Nilai awalnya diset oleh script inline di `index.html` dari `localStorage.todo_theme`.

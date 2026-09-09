@@ -389,6 +389,49 @@ body {
   color: var(--color-primary-foreground) !important;
 }
 
+/* ===== Papan display TV (/display) ===== */
+
+/* Sapuan cahaya di header papan display. Hanya `transform`, tidak menyentuh
+   layout — papan ini menyala 24 jam di TV. */
+@keyframes sapuan {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(220%); }
+}
+
+.sapuan::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -40%;
+  width: 60%;
+  background: linear-gradient(120deg, transparent, rgb(255 255 255 / 0.12), transparent);
+  animation: sapuan 6s linear infinite;
+}
+
+/* Teks berjalan di kaki papan display. `transform` saja; menganimasikan
+   `left` memaksa layout dihitung ulang tiap frame, selamanya. */
+@keyframes berjalan {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.berjalan {
+  display: inline-block;
+  white-space: nowrap;
+  animation: berjalan 30s linear infinite;
+}
+
+/* Panel papan display digeser oleh timer, tidak pernah oleh tangan. Scrollbar
+   yang terlihat di TV hanya sampah visual. */
+.papan-scroll {
+  scrollbar-width: none;
+}
+
+.papan-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 @theme {
   --font-sans: "Montserrat", system-ui, sans-serif;
   --color-primary: #2fa6a0;

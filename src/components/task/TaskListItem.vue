@@ -20,7 +20,7 @@
       <div class="flex items-center gap-3 text-xs text-muted-foreground">
         <span class="inline-flex items-center gap-1">
           <PhUserCircle :size="13" class="shrink-0" />
-          {{ task.pemberi }}
+          {{ peran === "pembuat" ? task.assignee : task.pemberi }}
         </span>
         <span class="inline-flex items-center gap-1">
           <PhCalendarBlank :size="13" class="shrink-0" />
@@ -39,5 +39,8 @@ import TaskStatusBadge from "./TaskStatusBadge.vue"
 
 defineProps({
   task: { type: Object, required: true },
+  // Peran pengguna terhadap task ini. Menentukan siapa yang ditampilkan di
+  // baris meta: lawan bicaranya, bukan dirinya sendiri.
+  peran: { type: String, default: "assignee" },
 })
 </script>

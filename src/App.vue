@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-svh bg-surface-2">
+  <RouterView v-if="route.meta.layar" />
+
+  <div v-else class="min-h-svh bg-surface-2">
     <main
       class="mx-auto min-h-svh w-full max-w-lg border-x border-border bg-surface"
       :class="route.meta.hideBottomNav ? '' : 'pb-32'"
